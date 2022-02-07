@@ -1,0 +1,68 @@
+# 打包会排除 该配置为样本
+schemaName: user_db
+dataSources:
+  user_0_master:
+    url: jdbc:mysql://127.0.0.1:3306/user_0?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&connectTimeout=1000&socketTimeout=60000&rewriteBatchedStatements=true
+    username: root
+    password:
+    connectionTimeoutMilliseconds: 5000
+    idleTimeoutMilliseconds: 60000
+    maxLifetimeMilliseconds: 1800000
+    minPoolSize: 10
+    maxPoolSize: 100
+  user_0_slave:
+    url: jdbc:mysql://127.0.0.1:3306/user_0?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&connectTimeout=1000&socketTimeout=60000&rewriteBatchedStatements=true
+    username: root
+    password:
+    connectionTimeoutMilliseconds: 5000
+    idleTimeoutMilliseconds: 60000
+    maxLifetimeMilliseconds: 1800000
+    minPoolSize: 10
+    maxPoolSize: 100
+  user_1_master:
+    url: jdbc:mysql://127.0.0.1:3306/user_1?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&connectTimeout=1000&socketTimeout=60000&rewriteBatchedStatements=true
+    username: root
+    password:
+    connectionTimeoutMilliseconds: 5000
+    idleTimeoutMilliseconds: 60000
+    maxLifetimeMilliseconds: 1800000
+    minPoolSize: 10
+    maxPoolSize: 100
+  user_1_slave:
+    url: jdbc:mysql://127.0.0.1:3306/user_1?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&connectTimeout=1000&socketTimeout=60000&rewriteBatchedStatements=true
+    username: root
+    password:
+    connectionTimeoutMilliseconds: 5000
+    idleTimeoutMilliseconds: 60000
+    maxLifetimeMilliseconds: 1800000
+    minPoolSize: 10
+    maxPoolSize: 100
+rules:
+  - !SHARDING
+    tables:
+      sys_user:
+        # 如果加了读写分离就是读写分离的datasource 逻辑名，不加读写分离就是原始datasource 的名字，去掉master、slave多余的信息
+        actualDataNodes: user_${0..1}.sys_user
+    defaultDatabaseStrategy:
+      standard:
+        shardingColumn: user_id
+        shardingAlgorithmName: database_inline
+    shardingAlgorithms:
+      database_inline:
+        type: INLINE
+        props:
+          algorithm-expression: user_${user_id % 2}
+      table_inline:
+        type: INLINE
+        props:
+          algorithm-expression: user_${user_id % 2}
+  - !READWRITE_SPLITTING
+    dataSources:
+      user_0:
+        writeDataSourceName: user_0_master
+        readDataSourceNames:
+          - user_0_slave
+      user_1:
+        writeDataSourceName: user_1_master
+        readDataSourceNames:
+          - user_1_slave

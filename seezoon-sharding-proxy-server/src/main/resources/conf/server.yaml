@@ -1,0 +1,10 @@
+# 打包后会排除，此为样本
+rules:
+  - !AUTHORITY
+    users:
+      - "root@%:123456"
+    provider:
+      type: ALL_PRIVILEGES_PERMITTED
+props:
+  sql-show: true
+  check-table-metadata-enabled: true
