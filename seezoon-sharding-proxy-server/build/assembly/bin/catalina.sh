@@ -54,7 +54,7 @@ stop() {
       running=$(pidRunning)
       if [ $running -eq 1 ]; then
         sleep 1
-        SHUTDOWN_SECONDS=$(expr $SHUTDOWN_SECONDS - 1)
+        SHUTDOWN_SECONDS=$(($SHUTDOWN_SECONDS - 1))
       else
         echoGreen "${APP_NAME} stoped"
         return
